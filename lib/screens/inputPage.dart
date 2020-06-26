@@ -1,8 +1,13 @@
+import 'package:bmi_calculator/calculatorBrain.dart';
+import 'package:bmi_calculator/components/bottomButton.dart';
+import 'package:bmi_calculator/components/reusableCard.dart';
+import 'package:bmi_calculator/components/roundIconButton.dart';
+
+import '../constants.dart';
+import './resultsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'iconContent.dart';
-import 'reusableCard.dart';
-import 'constants.dart';
+import '../components/iconContent.dart';
 
 enum Gender { male, female }
 
@@ -15,6 +20,7 @@ class _InputPageState extends State<InputPage> {
   Gender selectedGender;
   int height = 180;
   int weight = 60;
+  int age = 21;
 
   @override
   Widget build(BuildContext context) {
@@ -117,36 +123,86 @@ class _InputPageState extends State<InputPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            FloatingActionButton(
-                              onPressed: () {},
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.white,
-                              ),
-                              backgroundColor: Color(0xFF4C4F5E),
+                            RoundIconButton(
+                              icon: FontAwesomeIcons.minus,
+                              onPressed: () {
+                                setState(() {
+                                  weight--;
+                                });
+                              },
                             ),
-                            FloatingActionButton(
-                              onPressed: () {},
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.white,
-                              ),
-                              backgroundColor: Color(0xFF4C4F5E),
+                            RoundIconButton(
+                              icon: FontAwesomeIcons.plus,
+                              onPressed: () {
+                                setState(() {
+                                  weight++;
+                                });
+                              },
                             ),
                           ],
                         )
                       ],
                     ),
                   )),
-                  Expanded(child: ReusableCard(colour: kactiveCardColour))
+                  Expanded(
+                      child: ReusableCard(
+                    colour: kactiveCardColour,
+                    cardChild: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('AGE', style: klabelTextStyle),
+                        Text(
+                          age.toString(),
+                          style: kNumberTextStyle,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            RoundIconButton(
+                              icon: FontAwesomeIcons.minus,
+                              onPressed: () {
+                                setState(() {
+                                  age--;
+                                });
+                              },
+                            ),
+                            RoundIconButton(
+                              icon: FontAwesomeIcons.plus,
+                              onPressed: () {
+                                setState(() {
+                                  age++;
+                                });
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  )),
                 ],
               ),
             ),
-            Container(
-              color: kbottomContainerColour,
-              margin: EdgeInsets.only(top: 10),
-              width: double.infinity,
-              height: kbottomContainerHeight,
+            BottomButton(
+              buttonTitle: "CALCULATE",
+              onTap: () {
+                CalculatorBrain calc = CalculatorBrain(
+                  height,
+                  weight,
+                );
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ResultsPage(
+                        bmiResult: calc.calculateBMI(),
+                        resultString: calc.getResult(),
+                        interpretation: calc.getInterpretation(),
+                      );
+                    },
+                  ),
+                );
+              },
             )
           ],
         ));
